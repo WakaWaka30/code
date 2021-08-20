@@ -1,0 +1,49 @@
+// code for calculating the sum of prime numbers in a given range
+#include <stdio.h>
+
+int main()
+{
+   int temp,i=0,j=0,sum=0,low,high,flag;
+   printf("Enter lower value: ");
+   scanf("%d",&low);
+   printf("Enter higher value: ");
+   scanf("%d",&high);
+   if (low<0 || high<0){ 
+       printf("Invalid input");
+       return 0;
+   }
+   if (low == 0){
+       low = low + 2;
+   }
+   if (low == 1){
+       low++;
+   }
+  
+  
+   if (low>high){
+       printf("Input values in their respective field\n\n");
+       return main(); // returns to the start of the function
+       
+   }
+   for(i=low;i<=high;i++){
+       flag=1; // intially flag is 1
+       for(j=2;j<=i/2;j++){
+           if (i % j == 0){ //if imodj=0 then that means j divides i hence the number being observed (i.e. i) is not prime 
+               flag=0; //we put flag = 0 in the above case and break the loop
+               break; // we will go to next integer between low and high for that we need to stop the inner loop from working.
+           }
+       }
+       
+          
+        
+        if(flag==1){
+            sum = sum + i;
+        }
+           
+       
+     
+   }
+   printf("The sum of all prime numbers between %d and %d is %d",low,high,sum);
+
+   return 0;
+}

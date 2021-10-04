@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+int toASCII(char c){
+    return (int)c;
+}
+int fromASCII(int n){
+    return (char)n;
+}
+int reverse(int n){
+    int rev = 0,a;
+    a = n;
+    while(1){
+        rev = rev*10 + a%10;
+        a = a/10;
+        if(a<1)
+           break;
+    }
+    return rev;
+}
+int counter(int n){
+    int count = 0,a;
+    a = n;
+    while(1){
+        count++;
+        a = a/10;
+        if(a<1)
+            break;
+    }
+    return count;
+}
+int DecimaltoBinary(int n){
+    int bin=0,a,mul=1;
+    a = n;
+    while(1){
+        bin = bin + (n%2)*mul;
+        n = n/2;
+        mul=mul*10;
+        if(n<1)
+            break;
+    }
+    return bin;
+    
+}
+int strtoint(int n){
+    int res;
+    res = toASCII(n);
+    res = DecimaltoBinary(res);
+    return res;
+}
+
+
+
+int main()
+{
+    int m,i=0;
+    char str[100];
+    int arr[100];
+    printf("Enter string: ");
+    scanf("%[^\n]%*c",str);
+    m = strlen(str);
+    
+    for(i=0;i<m;i++)
+       arr[i] =  strtoint(str[i]); 
+    
+    printf("%s is in binary format is:-\n",str);
+    for(i=0;i<m;i++){
+        printf("%d",arr[i]);
+    }
+
+    return 0;
+}
+

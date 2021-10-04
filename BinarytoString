@@ -1,0 +1,67 @@
+#include<stdio.h>
+#include<math.h>
+int fromASCII(int n){
+    return (char)n;
+}
+int counter(int n){
+    int a = n,count = 0;
+    while(1){
+        count++;
+        a = a/10;
+        if(a<1)
+            break;
+    }
+    return count;
+}
+int BinarytoDecimal(int n){
+    int a = n,p=0,sum = 0;
+    while(1){
+        sum = sum + (a%10)*(pow(2,p));
+        p++;
+        a = a/10;
+        if(a<1)
+            break;
+        
+    }
+    return sum;
+}
+void inttostr(long long int n){
+    long long int i=0,j=0,k=0,m,a,b,c;
+    a = n;
+    b = n;
+    c = n;
+    long long int arr[100];
+    for(i=0;i<counter(a);i++){
+        m = a%((long long int)pow(10,8));
+        a = a/((long long int)pow(10,8));
+        arr[i] = BinarytoDecimal(m);
+        if(a<1)
+            break;
+    }
+    if(counter(b)<8){
+        for(k=0;k<(8-counter(c));k++)
+            printf("0");
+        printf("%lld in string format is:-\n",n);
+    }
+    else
+        printf("%lld in string format is:-\n",n);
+        
+    if(i!=0){
+        for(j=0;j<i;j++)
+            arr[i] = arr[i-j];
+        for(j=0;j<i;j++)
+            printf("%c",fromASCII(arr[j]));
+    }
+    else
+        printf("%c",fromASCII(arr[0]));
+}
+    
+int main(){
+    long long int x;
+    
+    printf("Enter binary code: ");
+    scanf("%lld",&x);
+    
+    inttostr(x);
+    return 0;
+}

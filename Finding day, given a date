@@ -57,7 +57,7 @@ void weekPrint(int d, int m, int y){
     a = y%100;
     a = a/4;
     a = a + d;
-    printf("\n%d\n",a);
+   
     switch(b){
         case 1:
             if(checkLeap(y) == 1){
@@ -110,10 +110,10 @@ void weekPrint(int d, int m, int y){
             b = 6;
             break;
     }
-    printf("\n%d\n",b);
+    
     a = a + b;
     a = a + centuryCode(y);
-    a = a%100;
+    a = a%7;
     
     switch(a){
         case 1:
@@ -149,39 +149,39 @@ int main()
     printf("Enter date in dd/mm/yyyy format: ");
     scanf("%d/%d/%d",&d,&m,&y);
     if(y<0){
-        printf("Error: Invalid Input\n\n");
+        printf("Invalid Input\n\n");
         return main();
     }
     else{
         if(m<0 || m>12){
-            printf("Error: Invalid Input\n\n");
+            printf("Invalid Input\n\n");
             return main();
         }
-        else if(m == 2 && checkLeap(y) == 1)
-            if(d<0 || d>29){
-                printf("Error: Invalid Input\n\n");
-                return main();
-            }
-        else if(m == 2 && checkLeap(y) == 0)
-            if(d<0 || d>28){
-                printf("Error: Invalid Input\n\n");
-                return main();    
-            }
-        else if(m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m==10 || m == 12)
-            if(d<0 || d>31){
-                printf("Error: Invalid Input\n\n");
-                return main();
-            }
-        else if(m == 4 || m == 6 || m == 9 || m == 11)
-            if(d<0 || d>30){
-                printf("Error: Invalid Input\n\n");
-                return main();    
-            }
-        else{
-            printf("%d/%d/%d",d,m,y);
-            weekPrint(d,m,y);
+        else if ((m == 2 && checkLeap(y) == 1) && (d<0 || d>29)){
+            printf("Invalid Input\n\n");
+            return main();
         }
+        else if ((m == 2 && checkLeap(y) == 0) && (d<0 || d>28)){
+            printf("Invalid Input\n\n");
+            return main();
+        }
+        else if((m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m==10 || m == 12) && (d<0 || d>31)){
+            printf("Invalid Input\n\n");
+            return main();
+        }
+        else if((m == 4 || m == 6 || m == 9 || m == 11) && (d<0 || d>30)){
+            printf("Invalid Input\n\n");
+            return main();
+        }
+        else
+            weekPrint(d,m,y);    
+        
+    
+    
     }
+    
+        
+    
         
     
     

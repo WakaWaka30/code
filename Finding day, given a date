@@ -56,10 +56,8 @@ void weekPrint(int d, int m, int y){
     b = m;
     c = y;
     a = y%100;
-    if(a<4)
-        a = a%4;
-    else    
-        a = a/4;
+       
+    a = a/4;
     a = a + d;
    
     switch(b){
@@ -117,6 +115,7 @@ void weekPrint(int d, int m, int y){
     
     a = a + b;
     a = a + centuryCode(y);
+    a = a + y%100;
     a = a%7;
     
     switch(a){
@@ -187,6 +186,7 @@ int main()
         
     
         
+    
     
     return 0;
 }

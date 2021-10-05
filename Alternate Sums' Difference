@@ -1,0 +1,81 @@
+/* Difference of the sum of alternate digits (D)
+Given a positive integer 'x' (with even number of digits in it), write an algorithm and 
+the subsequent code to compute the difference between  the sum of the digits occuring in 
+the alternate positions (starting from the first position) and the sum of the digits occuring 
+in the alternate positions,starting from the last rightmost position of 'x'
+
+For example, consider the number  8975.  The sum of the digits that occur in the alternate positions 
+from the first position is 8+7=15.  The sum of the digits that occur in the alternate positions, starting 
+from the rightmost position is 5+9 = 14. Difference between the two sums is 1 (=15-14).  Similarly, for the 
+number 5798, the difference between  two sums, is 1.*/  
+
+/*Algorithm:
+Step 1: start
+Step 2: Create an integer function named counter, which counts the number of digits in a number n.
+        Step 2.1 Declare count = 0 and a = n.
+        Step 2.2 In an infinite loop, do count++ and a = a/10 until a<1 after which, break the loop.
+        Step 2.3 Return count.
+Step 3: Create an integer function alternateSumDiff for number n, which does the required task of the question.
+        Step 3.1 Declare i = 0, a = n, sum1 = 0, sum2 = 0;
+        Step 3.2 For i=0;i<counter(a);i++ if the value of i when divided by 2 gives 0 as the remainder then add 
+                n%10 to sum1, else add n%10 to sum2.
+        Step 3.3 Do n = n/10 for each iteration and if n<1, break the loop.
+        Step 3.4 Return sum2-sum1
+Step 4: Input n from user. If number of digits in n is odd, print error and return main to re-eneter values else 
+        do alternateSumDiff(n) and print it as the result.
+Step 5: End */        
+
+#include<stdio.h>
+int counter (int n){
+    int count = 0,a = n;
+    while(1){
+        count++;
+        a = a/10;
+        if(a<1)
+            break;
+    }
+    return count;
+}
+
+int alternateSumDiff(int n){
+    
+    int i = 0,a = n,sum1 = 0,sum2=0;
+    
+    if(1){
+        for(i=0;i<counter(a);i++){
+            if(i%2==0)
+                sum1 = sum1 + n%10;
+            else 
+                sum2 = sum2 + n%10;
+            n = n/10;    
+            
+        }
+        return sum2-sum1;
+    }    
+}
+int main(){
+    int n,res,a;
+    
+    printf("Enter a number with even number of digits: ");
+    scanf("%d",&n);
+    a = n;
+    if(a<0){
+        printf("Invalid Input\n\n");
+        return main();
+    }
+    
+    else if(counter(a)%2!=0){
+        printf("Error: Number doesn't contain even number of digits\n\n");
+        return main();
+    }
+    
+    
+    
+    else{
+        
+        res = alternateSumDiff(n);
+        printf("Difference between sums of alternate digits in %d from leftmost digt and rightmost digit respectively is %d",a,res);
+    }
+    return 0;
+
+}

@@ -55,7 +55,10 @@ void weekPrint(int d, int m, int y){
     b = m;
     c = y;
     a = y%100;
-    a = a/4;
+    if(a<4)
+        a = a%4;
+    else    
+        a = a/4;
     a = a + d;
    
     switch(b){

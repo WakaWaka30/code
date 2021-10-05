@@ -44,7 +44,7 @@ int centuryCode(int n){
                 c = c + 400;
             else if (c>=2100)
                 c = c - 400;
-            if(c>1699 && c<2100)
+            else if(c>1699 && c<2100)
                 break;
         }
         return centuryCode(c);
@@ -57,58 +57,86 @@ void weekPrint(int d, int m, int y){
     a = y%100;
     a = a/4;
     a = a + d;
+    printf("\n%d\n",a);
     switch(b){
         case 1:
-            if(checkLeap(y) == 1)
+            if(checkLeap(y) == 1){
                 b = 0;
-            else
+                break;
+            }
+            else{
                 b = 1;
+                break;
+            }
+    
         case 2:
-            if(checkLeap(y) == 1)
+            if(checkLeap(y) == 1){
                 b = 3;
-            else
+                break;
+            }
+            else{
                 b = 4;
+                break;
+            }
             
         case 3:
             b = 4;
+            break;
         case 4:
             b = 0;
+            break;
         case 5: 
             b = 2;
+            break;
         case 6: 
             b = 5;
+            break;
         case 7: 
             b = 0;
+            break;
         case 8: 
             b = 3;
+            break;
         case 9: 
             b = 6;
+            break;
         case 10: 
             b = 1;
+            break;
         case 11: 
             b = 4;
+            break;
         case 12: 
-            b = 6;    
+            b = 6;
+            break;
     }
+    printf("\n%d\n",b);
     a = a + b;
     a = a + centuryCode(y);
-    a = a + y%100;
+    a = a%100;
     
     switch(a){
         case 1:
             printf("The day on %d/%d/%d is Sunday",d,m,y);
+            break;
         case 2:
             printf("The day on %d/%d/%d is Monday",d,m,y);
+            break;
         case 3:
             printf("The day on %d/%d/%d is Tuesday",d,m,y);
+            break;
         case 4:
             printf("The day on %d/%d/%d is Wednesday",d,m,y);
+            break;
         case 5:
             printf("The day on %d/%d/%d is Thursday",d,m,y);
+            break;
         case 6:
             printf("The day on %d/%d/%d is Friday",d,m,y);
+            break;
         case 0:
-            printf("The day on %d/%d/%d is Saturday",d,m,y);    
+            printf("The day on %d/%d/%d is Saturday",d,m,y);   
+            break;
             
     }
     
@@ -134,12 +162,12 @@ int main()
                 printf("Error: Invalid Input\n\n");
                 return main();
             }
-        else if(m == 2 && checkLeap(y == 0))
+        else if(m == 2 && checkLeap(y) == 0)
             if(d<0 || d>28){
                 printf("Error: Invalid Input\n\n");
                 return main();    
             }
-        else if(m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m==10 || m==12)
+        else if(m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m==10 || m == 12)
             if(d<0 || d>31){
                 printf("Error: Invalid Input\n\n");
                 return main();
@@ -149,8 +177,10 @@ int main()
                 printf("Error: Invalid Input\n\n");
                 return main();    
             }
-        else
+        else{
+            printf("%d/%d/%d",d,m,y);
             weekPrint(d,m,y);
+        }
     }
         
     

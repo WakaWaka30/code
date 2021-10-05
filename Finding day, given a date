@@ -1,0 +1,160 @@
+#include <stdio.h>
+int reverse(int n){
+    int rev = 0,a = n;
+    while(1){
+        rev = rev*10 + a%10;
+        a = a/10;
+        if(a<1)
+            break;
+    }
+    return rev;
+}
+
+int checkLeap(int n){
+    int a = n;
+    if(a%100 != 0){
+        if(a%4 == 0)
+            return 1;
+        else
+            return 0;
+    }
+    else{
+        if(a%400 == 0)
+            return 1;
+        else 
+            return 0;
+    }
+}
+int centuryCode(int n){
+    int c = n;
+    if(c>1699 && c<2100){
+        if(c>1700 && c<1800)
+            return 4;
+        if(c>1800 && c<1900)
+            return 2;
+        if(c>1900 && c<2000)
+            return 0;
+        if(c>2000 && c<2100)
+            return 6;
+    }
+    else
+    {
+        while(1){
+            if(c<=1699)
+                c = c + 400;
+            else if (c>=2100)
+                c = c - 400;
+            if(c>1699 && c<2100)
+                break;
+        }
+        return centuryCode(c);
+    }
+}
+void weekPrint(int d, int m, int y){
+    int a,b,c;
+    b = m;
+    c = y;
+    a = y%100;
+    a = a/4;
+    a = a + d;
+    switch(b){
+        case 1:
+            if(checkLeap(y) == 1)
+                b = 0;
+            else
+                b = 1;
+        case 2:
+            if(checkLeap(y) == 1)
+                b = 3;
+            else
+                b = 4;
+            
+        case 3:
+            b = 4;
+        case 4:
+            b = 0;
+        case 5: 
+            b = 2;
+        case 6: 
+            b = 5;
+        case 7: 
+            b = 0;
+        case 8: 
+            b = 3;
+        case 9: 
+            b = 6;
+        case 10: 
+            b = 1;
+        case 11: 
+            b = 4;
+        case 12: 
+            b = 6;    
+    }
+    a = a + b;
+    a = a + centuryCode(y);
+    a = a + y%100;
+    
+    switch(a){
+        case 1:
+            printf("The day on %d/%d/%d is Sunday",d,m,y);
+        case 2:
+            printf("The day on %d/%d/%d is Monday",d,m,y);
+        case 3:
+            printf("The day on %d/%d/%d is Tuesday",d,m,y);
+        case 4:
+            printf("The day on %d/%d/%d is Wednesday",d,m,y);
+        case 5:
+            printf("The day on %d/%d/%d is Thursday",d,m,y);
+        case 6:
+            printf("The day on %d/%d/%d is Friday",d,m,y);
+        case 0:
+            printf("The day on %d/%d/%d is Saturday",d,m,y);    
+            
+    }
+    
+    
+    
+}
+int main()
+{
+    int d,m,y;
+    printf("Enter date in dd/mm/yyyy format: ");
+    scanf("%d/%d/%d",&d,&m,&y);
+    if(y<0){
+        printf("Error: Invalid Input\n\n");
+        return main();
+    }
+    else{
+        if(m<0 || m>12){
+            printf("Error: Invalid Input\n\n");
+            return main();
+        }
+        else if(m == 2 && checkLeap(y) == 1)
+            if(d<0 || d>29){
+                printf("Error: Invalid Input\n\n");
+                return main();
+            }
+        else if(m == 2 && checkLeap(y == 0))
+            if(d<0 || d>28){
+                printf("Error: Invalid Input\n\n");
+                return main();    
+            }
+        else if(m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m==10 || m==12)
+            if(d<0 || d>31){
+                printf("Error: Invalid Input\n\n");
+                return main();
+            }
+        else if(m == 4 || m == 6 || m == 9 || m == 11)
+            if(d<0 || d>30){
+                printf("Error: Invalid Input\n\n");
+                return main();    
+            }
+        else
+            weekPrint(d,m,y);
+    }
+        
+    
+    
+
+    return 0;
+}

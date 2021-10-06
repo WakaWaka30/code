@@ -1,5 +1,15 @@
 #include <stdio.h>
 #include <math.h>
+int counter(int n){
+    int count=0,a=n;
+    while(1){
+        count++;
+        a = a/10;
+        if(a<1)
+            break;
+    }
+    return count;
+}
 long long int CheckBinary(long long int n){
     long long int a = n;
     while(1){
@@ -71,10 +81,46 @@ long long int BinarytoDecimal(long long int n){
     }
     return sum;
 }
+void DecimaltoHex(int n){
+    int b,a=n,hex=0,i=0,j=0,d,len;
+    
+    char c;
+    char num[counter(n)];
+    for(i=0;i<counter(n);i++){
+        
+        b = a%16;
+        if(b<10){
+            d = b + 48;
+            c = (char)d;
+            num[i] = c;
+        }
+        else{
+            d = b + 55;
+            c = (char)d;
+            num[i] = c;
+        }
+        
+        a = a/16;    
+        
+        if(a<1)
+            break;
+    }
+    
+    len = sizeof(num)/sizeof(num[0]);
+    len = len - 1;
+    
+    for(j=len-1;j>=0;j--)
+        printf("%c",num[j]);
+    
+    printf("\n");    
+    
+}
+    
+
 int main(){
     int n,x,y;
     long long int N;
-    printf("Enter 1 for Binary to Decimal conversion\nEnter 2 for Decimal to Binary conversion\nEnter 3 for Decimal to Octal conversion\nEnter 4 for Octal to Decimal conversion: ");
+    printf("Enter 1 for Binary to Decimal conversion\nEnter 2 for Decimal to Binary conversion\nEnter 3 for Decimal to Octal conversion\nEnter 4 for Octal to Decimal conversion\nEnter 5 for Decimal to Hexadecimal conversion: ");
     scanf("%d",&x);
     if(x==2){
         printf("Enter decimal number: ");
@@ -152,6 +198,25 @@ int main(){
         else 
             return 0;
     
+        
+    }
+    else if(x==5){
+        printf("Enter decimal number: ");
+        scanf("%d",&n);
+       
+        
+        DecimaltoHex(n);
+        
+        
+        
+        printf("Enter 3 to restart\nEnter any other key to exit: ");
+        scanf("%d",&y);
+        if(y == 3){
+            printf("\n\n");
+            return main();
+        }
+        else 
+            return 0;
         
     }
 }

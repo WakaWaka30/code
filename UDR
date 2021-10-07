@@ -1,0 +1,84 @@
+/*Unique Dimension Rectangles (UDRs) (D)
+A collection of rectangles are said to be unique dimension rectangles (UDRs) if they have distict dimensions. 
+Dimension of a rectangle is a pair of length and breadth represented as (length, breadth). That is a collection 
+of five rectangles with integer dimensions (10, 20), (34, 56), (12, 13), (19,10), (16, 18) are UDRs and whereas 
+the five rectangles with the dimension (10, 20), (34, 56), (12, 13), (19,10), (20, 10) cannot be UDRs since (10, 20) 
+and (20,10) are duplicated except change in order. Given an integer 'n' write a code to findout the number of UDRs that 
+can be formed with area as 'n' and also print the dimensions.
+
+For example if 168 is given then there are eight UDRs with dimensions as follows (1,168), (2, 84), (3, 56), (4,42), (6, 28), 
+(7, 24), (8,21), (12,14).
+
+Input Format
+
+First line contains an integer, n
+
+Output Format
+
+First line contains the number of UDRs that can be formed, u
+
+Next ‘u’ lines contains the pair of numbers in ascending order separated by a space and that can be dimension of rectangles 
+whose area is n */
+
+
+
+
+#include <stdio.h>
+
+int CheckNum(int** num, int x){
+    int i = 0,j = 0, lenr = sizeof(num)/sizeof(num[0]),lenc = sizeof(num)/sizeof(num[0][0]);
+    for(i=0;i<lenr-1;i++)
+        for(j=0;i<lenc-1;j++)
+    
+            if(num[i][j] == x)
+                break;
+        
+            
+    
+    if (i == lenr - 1 && j == lenc - 1)
+        return 1;
+    else
+        return 0;
+}
+void CheckUDR(int n){
+    int i=0,j=0,count=0;
+    int store[n+1][n+1];
+    for(i=0;i<n+1;i++)
+        store[0][i] = 0;
+    for(i=0;i<n+1;i++)
+        store[i][0] = 0; 
+    
+    for(i=1;i<=n;i++){
+        for(j=1;j<=n;j++){
+            if(i*j == n){
+                store[i][j] = 1;
+                store[j][i] = 0;
+                count++;
+            }
+            else
+                store[i][j] = 0;
+        }
+            
+    }
+    count = count/2;
+    printf("The number of UDRs formed is %d\n",count);
+    
+    for(i=n;i>=0;i--)
+        for(j=n;j>=0;j--){
+            if(store[i][j] == 1)
+                printf("(%d,%d)\n",j,i);
+            else
+                continue;
+        }
+    
+    
+}
+int main(){
+    int n;
+    printf("Enter area: ");
+    scanf("%d",&n);
+    CheckUDR(n);
+    return 0;
+    
+
+}

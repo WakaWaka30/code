@@ -10,6 +10,11 @@ int Partition(int* A, int low, int high){
         }
             
         while(1){
+            
+            if(j == high && A[j]<=A[pivot])
+                break;
+            
+            
             j--;
             if(A[j]<=A[pivot])
                 break;

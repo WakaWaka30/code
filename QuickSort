@@ -39,7 +39,7 @@ void QuickSort(int* A, int low, int high){
     int P;
     if(low<high){
         P = Partition(A,low,high);
-        QuickSort(A,low,P);
+        QuickSort(A,low,P-1); //It was changed from P to P-1 because in case a scenario comes where after j-- A[j] = A[pivot] then in after next partition again A[j] = A[pivot]as previous pivot P was included again, so this would lead to an infinite recursion, hence we discard P in next recursion so as to avoid this infinite recursion error
         QuickSort(A,P+1,high);
     }
 }

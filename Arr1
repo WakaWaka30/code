@@ -1,0 +1,51 @@
+/*To find all numbers in array whose duplicates exist within it but the duplicates shouldn't be printed. Aim is to execute in O(n^2) rather than O(n^3)*/
+#include <stdio.h>
+
+int Checkelement(int x, int n, int A[n]){
+    int i=0;
+    for(i=0;i<n;i++)
+        if(x == A[i])
+            break;
+    
+    if(i == n)
+        return 1;
+    else 
+        return 0;
+}
+int main(){
+    int n;
+    printf("Enter number of elements in array: ");
+    scanf("%d",&n);
+    int A[n];
+    int i=0,j=0;
+    for(i=0;i<n;i++){
+        printf("Enter %dth element of array: ",i+1);
+        scanf("%d",&A[i]);
+    }
+    int B[n];
+    for(i=0;i<n;i++)
+        B[i] = 0;
+    for(i=0;i<n;i++)
+        for(j=0;j<n;j++){
+            if(A[i] == A[j] && i!=j){
+                if(Checkelement(A[i],n,B) == 1)
+                    B[i] = A[i];
+                else
+                    continue;
+            }
+                    
+        }
+    printf("Number of elements which have a duplicate in the array are:-\n");
+    
+    for(i=0;i<n;i++){
+        if(B[i]!=0)
+            printf("%d\n",B[i]);
+        else 
+            continue;
+    }
+    
+    return 0;    
+    
+    
+    
+}

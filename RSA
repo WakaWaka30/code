@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <time.h>
+
 
 int gcd(int m, int n){
     if(m%n == 0)
@@ -17,12 +17,6 @@ int gcd(int m, int n){
 }
         
     
-    
-        
-  
-    
-        
-
 int CheckPrime(int n){
     int i=0;
     for(i=2;i<=n/2;i++){
@@ -160,31 +154,19 @@ int powermod(int p, int b, int m){
     return res;
 }
 
-int* RSAencrypt(int* plain, int p, int q, int x){
+int CheckPK(int e, int n){
+    int z = Totient(n);
+    if(e>=z)
+        return 0;
+    else if(gcd(z,e) != 1)
+        return 0;
+    else
+        return 1;
+}
+int* RSAencrypt(int* plain, int p, int q, int x, int e){
     int n = p*q;
     int phiofn = Totient(n);
-    int i=0;
-    int e=13;
-    /*int e1[10];
-    int j=0;
-    for(i=2;i<12;i++){
-        
-    
-        if(gcd(phiofn,i) == 1){
-            e1[j] = i;    
-            j++;
-            printf("Array e1 value: %d\n",e1[j]);
-            
-            
-        }
-        
-        
-    }
-    int s = rand()%10;
-    printf("Value of s: %d\n",s);
-    e = e1[s];
-    */
-    int y;
+    int i=0,y;
     int* encrypt = (int*)malloc((x+1)*sizeof(int));
     *encrypt = e;
     for(i=0;i<x;i++){
@@ -215,7 +197,7 @@ char* RSAdecrypt(int* cipher, int p, int q, int x){
 }
 
 int main(){
-    int x,y,x1,x2;
+    int x,y,x1,x2,e;
     int n,i=0,choice;
     char *c,*charciph;
    
@@ -228,9 +210,24 @@ int main(){
     int* plain = toASCII(c,x);
     printf("Enter first prime number: ");
     scanf("%d",&x1);
+    if(CheckPrime(x1) == 0){
+        printf("%d is not prime",x1);
+        return 0;
+    }
     printf("Enter second prime number: ");
     scanf("%d",&y);
-    int* cipher = RSAencrypt(plain,x1,y,x);
+    if(CheckPrime(y) == 0){
+        printf("%d is not prime",x1);
+        return 0;
+    }
+        
+    printf("Enter public key(e) such that it is less than %d and it is coprime to it: ",Totient(x1*y));
+    scanf("%d",&e);
+    if(CheckPK(e,x1*y) == 0){
+        printf("%d cannot be used as the public key",e);
+        return 0;
+    }
+    int* cipher = RSAencrypt(plain,x1,y,x,e);
     printf("Enter 1 if you want numerical output\nEnter 2 if you want character output: ");
     scanf("%d",&choice);
     if(choice == 1){
@@ -262,12 +259,14 @@ int main(){
             printf("Enter %dth message block: ",i+1);
             scanf("%d",(cipher1+i+1));
         }
+        char* c1 = RSAdecrypt(cipher1,x1,y,x);
+        printf("\n%s",c1);
         
     }
-    char* c1 = RSAdecrypt(cipher1,x1,y,x);
-    printf("\n%s",c1);
     
     
+    else
+        return 0;
     
     
     

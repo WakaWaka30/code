@@ -79,9 +79,20 @@ int CheckPrime(int n){
         return 0;
 }   
 
+int PrimCheck(int n, int a){
+    int i=0;
+    int *p;
+    p = (int*)malloc(n*sizeof(int));
+    for(i=1;i<n;i++)
+        *(p+i) = powermod(i,a,n);
+    int res = CheckASE(p,n);    
+    
+    return res;        
+        
+}
 int main(){
-    int p,b,m,i=0;
-    printf("Enter number: ");
+    int p,b,m,i=0,a,x;
+    printf("Enter a prime number: ");
     scanf("%d",&p);
     if(CheckPrime(p) == 1){
         int *ptr = FindPR(p);
@@ -89,24 +100,76 @@ int main(){
         printf("Number of primitive roots for %d are: %d\nAll primitive roots of %d are:-\n",p,k-1,p);
         for(i=1;i<k;i++)
             printf("%d\n",*(ptr+i));
+        printf("Press 1 to choose a primitive root\nPress any other key to randomly pick a primitive root: ");
+        scanf("%d",&b);
+        if(b == 1){
+            printf("Press 1 to give index value to input primitive root (eg. input 1 to get %d as primitive root or input 4 to get %d as primitive root)\n",*(ptr+1),*(ptr+4));
+            printf("Press any other key to input the primitive root: ");
+            scanf("%d",&x);
+            if(x == 1){
+                printf("Enter the index value starting from 1: ");
+                scanf("%d",&m);
+                if(m>k-1){
+                    printf("%d exceeds number of primitive roots",m);
+                    return 0;
+                }
+                else
+                    a = *(ptr+m);
+                
+            }   
+                
+                
+            else{
+                printf("Enter the value for primitive root choosen from the values displayed above: ");
+                scanf("%d",&m);
+                if(PrimCheck(p,m) == 1)
+                    a=m;
+                else{
+                    printf("%d is not a primitive root of %d",m,p);
+                    return 0;
+                }
+            }
+                
+            
+        }
+        else{
+            int s = (rand())%(k-1)+1;
+            a = *(ptr+s);
+            
+        }
+        printf("%d was choosen as the primitive root\n",a);
+        int xa,xb,ya,yb,ka,kb;
+        printf("Enter private key less than %d for Alice: ",p);
+        scanf("%d",&xa);
+        if(xa>p){
+            printf("Error: Private key greater than %d",p);
+            return 0;
+        }
+        ya = powermod(xa,a,p);
+        
+        printf("%d is the public key for Alice\n",ya);
+        printf("Enter private key less than %d for Bob: ",p);
+        scanf("%d",&xb);
+        if(xb>p){
+            printf("Error: Private key greater than %d",p);
+            return 0;
+        }
+        yb = powermod(xb,a,p);
+        printf("%d is the public key for Bob\n",yb);
+        ka = powermod(xa,yb,p);
+        printf("Key on Alice's side = %d\n",ka);
+        
+        kb = powermod(xb,ya,p);
+        printf("Key on Bob's side = %d\n\n",kb);
+        
+        if(ka == kb)
+            printf("Diffie-Hellman Key Exchange was successful");
+        else
+            printf("Diffie-Hellman Key Exchange was unsuccessful");
+        
     }
     else
-        printf("Primitive roots do not exist for composite numbers");
+        printf("Error: %d is not prime",p);
     return 0;    
         
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

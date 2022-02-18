@@ -95,7 +95,7 @@ char** KeyMatGen(char *key1){
     for(i=0;i<r;i++)
         for(j=0;j<5;j++){
             *(*(keymat+i)+j) = *(key+k);
-            printf("%c\n",*(*(keymat+i)+j));
+            //printf("%c\n",*(*(keymat+i)+j));
             k++;
         }
     
@@ -157,18 +157,20 @@ char** KeyMatGen(char *key1){
 
 int main(){
     char k[100];
+    
     printf("Enter key: ");
     scanf("%s",k);
     int len = strlen(k);
     char* key1 = (char*)malloc(len*sizeof(char));
     int i=0,j=0;
     for(i=0;*(k+i)!='\0';i++)
-        *(key1+i) = *(k+i);
+        *(key1+i) = toupper(*(k+i));
     char** keyMat = KeyMatGen(key1);
     for(i=0;i<5;i++){
         for(j=0;j<5;j++)
             printf("%c\t",*(*(keyMat+i)+j));
         printf("\n");
     }
+    
     return 0;
 }

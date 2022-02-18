@@ -32,70 +32,100 @@ int CheckKey(char **keymat, char c, int x, int y){
 char** KeyMatGen(char *key1){
     char** keymat;
     char* key;
-    int i=0,j=0,count=0,l,k;
+    int i=0,j=0,count=0,l,k,c2=0;
     keymat = (char**)malloc(5*sizeof(char*));
     for(i=0;i<5;i++)
         *(keymat+i) = (char*)malloc(5*sizeof(char));
-    for(i=0;i<strlen(key1);i++)
+    for(i=0;i<strlen(key1);i++){
         if(*(key1+i) == 'J')
-            count++;
-    if(count == 0){
+                count++;
+        for(j=0;j<strlen(key1);j++)
+            if(*(key1+i) == *(key1+j))
+                count++;
+    }        
+    
+    if(count == strlen(key1)){
         key = (char*)malloc(strlen(key1)*sizeof(char));
         for(i=0;i<strlen(key1);i++)
             *(key+i) = *(key1+i);
         l = strlen(key);    
     }
     else{
-        key = (char*)malloc((strlen(key1)-count)*sizeof(char));
+        k=0;
+        int c1=0;
+        key = (char*)malloc((strlen(key1)*sizeof(char)));
         for(i=0;i<strlen(key1);i++){
-            if(*(key1+i) != 'J')
-                *(key+i) = *(key1+i);
+            if(*(key1+i) != 'J'){
+                c1=0;
+                for(j=0;j<strlen(key1);j++)
+                    if(*(key1+i) == *(key1+j) && i>j)
+                        c1++;
+                    
+                        
+                        
+                //printf("%d\n",c1);    
+                if(c1>0)
+                    continue;
+                else{
+                    *(key+k) = *(key1+i);
+                    k++;
+                }
+                    
+                
+            
+            }
+            
             else  
                 continue;
+            
         }
+        
         l = strlen(key);
     }        
-    printf("%s\n",key);
-    int r = (l/5)+1;
+    printf("Modified Key: %s\n",key);
+    int r;
     int c = l%5;
+    if(l%5 != 0)
+        r = (l/5)+1;
+    else
+        r = l/5;
     char ch;
     k=0;
-    printf("%d--%d\n",r,c);
+    //printf("%d--%d\n",r,c);
     for(i=0;i<r;i++)
         for(j=0;j<5;j++){
             *(*(keymat+i)+j) = *(key+k);
-            //printf("%c\n",*(*(keymat+i)+j));
+            printf("%c\n",*(*(keymat+i)+j));
             k++;
         }
     
     
     k=65;
-    
-    for(i=r-1;i<5;i++){
+    int t;
+    if(strlen(key) == 5)
+        t = r;
+    else
+        t = r-1;
+    for(i=t;i<5;i++){
+        
         
         if(i == r-1){
             
-            while(1){
-                ch = (char)k;
+            for(j=c;j<5;j++)
+            
+                while(1){
                 
-                if(CheckKey(keymat,ch,i,j) == 1){
-                    *(*(keymat+i)+3) = ch;
-                    break;
+                    ch = (char)k;
+                    if(ch == 'J')
+                        k++;
+                    else if(CheckKey(keymat,ch,i,j) == 1){
+                        *(*(keymat+i)+j) = ch;
+                        break;
+                    }
+                    else
+                        k++;
                 }
-                else
-                    k++;
-            }
-            k++;
-            while(1){
-                ch = (char)k;
-                
-                if(CheckKey(keymat,ch,i,j) == 1){
-                    *(*(keymat+i)+4) = ch;
-                    break;
-                }
-                else
-                    k++;
-            }
+            
             
         }
         
@@ -104,8 +134,9 @@ char** KeyMatGen(char *key1){
             for(j=0;j<5;j++){
                 while(1){
                     ch = (char)k;
-                    
-                    if(CheckKey(keymat,ch,i,j) == 1){
+                    if(ch == 'J')
+                        k++;
+                    else if(CheckKey(keymat,ch,i,j) == 1){
                         *(*(keymat+i)+j) = ch;
                         break;
                     }

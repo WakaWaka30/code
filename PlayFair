@@ -153,11 +153,90 @@ char** KeyMatGen(char *key1){
     
 }
 
+int* FindinKM(char **keymat, char c1, char c2){
+    int i=0,j=0, *p;
+    for(i=0;i<5;i++)
+        for(j=0;j<5;j++)
+            if(*(*(keymat+i)+j) == c1)
+                break;
+    *p = i;
+    *(p+1) = j;
+    
+    for(i=0;i<5;i++)
+        for(j=0;j<5;j++)
+            if(*(*(keymat+i)+j) == c2)
+                break;
+                
+    *(p+2) = i;
+    *(p+3) = j;            
+    return p;
+}
 
+char* ModifyPT(char* plaintext){// Segmentation Fault
+    int i=0,j=0,count=0;
+    int l = strlen(plaintext);
+    for(i=0;i<l;i++){
+        
+    
+        if(plaintext[i] == plaintext[i+1])
+            count++;
+            
+        
+    char *newPT = (char*)malloc((l+count+1)*sizeof(char));
+    j=0;
+    for(i=0;i<l;i++){
+        
+        newPT[j] = plaintext[i];
+        if(plaintext[i] == plaintext[i+1]){
+            newPT[j+1] = 'X';
+            j=j+2;
+        }
+        else
+            j++;
+    }
+    if (strlen(newPT)%2 != 0)
+        newPT[l+count] = 'X';
+    
+    return newPT;    
+        
+}
+
+char* PlayFairEncrypt(char **keymat, char *plaintext){
+    int i=0,j=0,i1,j1,i2,j2,*p;
+    int l = strlen(plaintext);
+    char *newPT;
+    if(l%2 != 0){
+        newPT = (char*)malloc((l+1)*sizeof(char));
+        newPT[l] = 'X';
+        l=l+1;
+    }
+    else
+        newPT = (char*)malloc(l*sizeof(char));
+    
+    char *cipher = (char*)malloc(strlen(newPT)*sizeof(char));
+    for(i=0;i<l;i++)
+            newPT[i] = plaintext[i];
+    
+    for(i=0;i<l;i=i+2){
+        p = FindinKM(keymat,newPT[i],newPT[i+1]);
+        i1 = *p;
+        j1 = *(p+1);
+        i2 = *(p+2);
+        j2 = *(p+3);
+        
+        if(i1 == i2){
+            cipher[i] = *(*(keymat+i1)+(j1-1)%5);
+            cipher[i+1] = *(*(keymat+i1)+(j1-1)%5);
+        
+        }
+    }       
+    
+    
+}
 
 int main(){
     char k[100];
-    
+    char* pt;
     printf("Enter key: ");
     scanf("%s",k);
     int len = strlen(k);
@@ -171,6 +250,10 @@ int main(){
             printf("%c\t",*(*(keyMat+i)+j));
         printf("\n");
     }
+    printf("Enter plaintext: ");
     
+    scanf("%s",pt);
+    pt = ModifyPT(pt);
+    printf("Modified Plaintext: %s",pt);
     return 0;
 }

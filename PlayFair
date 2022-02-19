@@ -1,3 +1,5 @@
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -153,7 +155,7 @@ char** KeyMatGen(char *key1){
     
 }
 
-int* FindinKM(char **keymat, char c1, char c2){
+int* FindinKM(char **keymat, char c1, char c2){ /*When modified key size is mulitple of 5 there is some erroe in playfair encryption*/
     int i=0,j=0, *p;
     p = (int*)malloc(4*sizeof(int));
     for(i=0;i<5;i++){
@@ -182,7 +184,7 @@ int* FindinKM(char **keymat, char c1, char c2){
     return p;
 }
 
-char* ModifyPT(char* plaintext1){// Segmentation Fault
+char* ModifyPT(char* plaintext1){
     int i=0,j=0,count=0;
     int l = strlen(plaintext1);
     char* plaintext = (char*)malloc(l*sizeof(char));
@@ -215,7 +217,7 @@ char* ModifyPT(char* plaintext1){// Segmentation Fault
         
 }
 
-char* PlayFairEncrypt(char **keymat, char *plaintext){
+char* PlayFairEncrypt(char **keymat, char *plaintext){ /*When modified key size is mulitple of 5 there is some erroe in playfair encryption*/
     int i=0,j=0,i1,j1,i2,j2,*p;
     
     char *newPT = ModifyPT(plaintext);

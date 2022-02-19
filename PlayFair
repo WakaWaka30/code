@@ -252,9 +252,43 @@ char* PlayFairEncrypt(char **keymat, char *plaintext){
     
 }
 
+char* PlayFairDecrypt(char** keymat, char* cipher){
+    int l = strlen(cipher),i=0,*p,i1,i2,j1,j2;
+    char* pt = (char*)malloc(strlen(cipher)*sizeof(char));
+    for(i=1;i<l;i=i+2){
+        p = FindinKM(keymat,cipher[i-1],cipher[i]);
+        i1 = *p;
+        j1 = *(p+1);
+        i2 = *(p+2);
+        j2 = *(p+3);
+        
+        if(i1 == i2){
+            pt[i-1] = *(*(keymat+i1)+(j1+1)%5);
+            pt[i] = *(*(keymat+i1)+(j2+1)%5);
+        
+        }
+        else if(j1 == j2){
+            pt[i-1] = *(*(keymat+(i1+1)%5)+j1);
+            pt[i] = *(*(keymat+(i2+1)%5)+j1);
+        }
+        else{
+            pt[i-1] = *(*(keymat+i1)+j2);
+            pt[i] = *(*(keymat+i2)+j1);
+            
+        }
+        free(p);
+        
+        
+    }
+    return pt;
+}
+    
+    
+
 int main(){
     char k[100];
     char pt[100];
+    char ct[100];
     printf("Enter key: ");
     scanf("%s",k);
     int len = strlen(k);
@@ -274,8 +308,15 @@ int main(){
     char* pt1 = ModifyPT(pt);
     printf("Modified Plaintext: %s\n",pt1);
     char* cipher = PlayFairEncrypt(keyMat,pt);
-    int *ptr = FindinKM(keyMat,pt1[3],pt1[1]);
-    printf("%s\n",cipher);
+    printf("Ciphertext: %s\n",cipher);
+    printf("Enter ciphertext: ");
+    scanf("%s",ct);
+    len = strlen(ct);
+    char* ciphertext = (char*)malloc(len*sizeof(char));
+    for(i=0;*(k+i)!='\0';i++)
+        *(ciphertext+i) = toupper(*(ct+i));
+    char* pt2 = PlayFairDecrypt(keyMat,cipher);
+    printf("Plaintext: %s\n",pt2);
     //printf("\n%d--%d--%d--%d",*ptr,*(ptr+1),*(ptr+2),*(ptr+3));
     return 0;
 }

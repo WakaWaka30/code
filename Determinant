@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int** MinorCreater(int **mat, int n, int r, int c){
+    int i=0,j=0,k1=0,k2=0;
+    int** minor = (int**)malloc((n-1)*sizeof(int*));
+    for(i=0;i<n-1;i++)
+        *(minor+i) = (int*)malloc((n-1)*sizeof(int));
+    
+    for(i=0;i<n;i++){
+        
+        k2=0;    
+        for(j=0;j<n;j++){
+           
+                
+            *(*(minor+k1)+k2) = *(*(mat+i)+j);   
+            printf("%d--%d\n",*(*(minor+i)+j),*(*(mat+i)+j));
+            printf("k1k2%d--%d\n",k1,k2);
+            if(j!=c)
+                k2++;
+                
+                
+                
+        }
+        if(i!=r)
+            k1++;
+            
+        
+        
+        
+    }
+    return minor;
+    
+}
+
+int main(){
+    printf("Enter order of matrix: ");
+    int n,i=0,j=0;
+    scanf("%d",&n);
+    int **mat;
+    
+    mat = (int**)malloc(n*sizeof(int*));
+    for(i=0;i<n;i++)
+        *(mat+i) = (int*)malloc(n*sizeof(int));
+    printf("Input the elements in matrix:-\n");
+    for(i=0;i<n;i++)
+        for(j=0;j<n;j++){
+            printf("Enter element in (%d,%d) cell: ",i+1,j+1);
+            scanf("%d",&mat[i][j]);
+        }
+        
+    int **minor1 = MinorCreater(mat,n,1,1);
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++)
+            printf("%d\t",mat[i][j]);
+            
+        printf("\n");
+    }
+    printf("\n");
+    for(i=0;i<n-1;i++){
+        for(j=0;j<n-1;j++)
+            printf("%d\t",minor1[i][j]);
+            
+        printf("\n");
+    }
+    return 0;
+}

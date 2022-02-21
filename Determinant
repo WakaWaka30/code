@@ -89,10 +89,10 @@ int Det(int** mat, int n){
     else   
         for(j=0;j<n;j++){
             minor1 = MinorCreater(mat,n,0,j);
-            printf("\n");
-            display(minor1,n-1);
+            //printf("\n");
+            //display(minor1,n-1);
             det = det + mat[0][j]*pow(-1,j)*Det(minor1,n-1);
-            printf("\n%d--%d",j,det);
+            //printf("\n%d--%d",j,det);
         }
             
     return det;    
@@ -137,7 +137,7 @@ int main(){
     }
     */
     int res = Det(mat,n);
-    printf("\n%d",res);
+    printf("\nDeterminant of the above matrix is %d",res);
     
     return 0;
     

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+float knapsack(float* profit, float* wt, int n, float  maxwt){
+    int i=0, maxid;
+    float wt1 = 0, frac;
+    float max = profit[0];
+    float maxprofit;
+    
+    while(wt1 != maxwt){
+        for(i=0;i<n;i++){
+            if(profit[i] == -1)
+                continue;
+            else if(profit[i]>max){
+                max = profit[i];
+                maxid = i;
+            }  
+        }
+        if(wt1 + wt[maxid] <= maxwt){
+            maxprofit = maxprofit + max;
+            wt1 = wt1 + wt[maxid];
+            
+        } 
+        else{
+            frac = (maxwt-wt1)/wt[maxid];
+            maxprofit =  maxprofit + frac*profit[maxid];
+            wt1 = wt1 + frac*wt[maxid];
+            
+        }
+        profit[maxid] = -1;
+    }
+    
+    return maxprofit;
+        
+            
+}
+int main(){
+    int i=0,n;
+    float maxwt;
+    printf("Enter number of items for knapsack: ");
+    scanf("%d",&n);
+    printf("Enter the maximum capacity of knapsack: ");
+    scanf("%f",&maxwt);
+    float* profit = (float*)malloc(n*sizeof(float));
+    float* wt = (float*)malloc(n*sizeof(float));
+    for(i=0;i<n;i++){
+        printf("Enter profit of %dth item: ",i+1);
+        scanf("%f",&profit[i]);
+        printf("Enter weight of %dth item: ",i+1);
+        scanf("%f",&wt[i]);
+    }
+    
+    float maxp = knapsack(profit,wt,n,maxwt);
+    printf("Maximum profit of this knapsack is %.2f",maxp);
+    return 0;
+    
+
+}

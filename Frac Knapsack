@@ -1,60 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-float knapsack(float* profit, float* wt, int n, float  maxwt){
-    int i=0, maxid;
-    float wt1 = 0, frac;
-    float max = profit[0];
-    float maxprofit;
+float knapsack(float* profit, float* weight, int n, float maxwt){
+    int i=0;
+    float* profwt = (float*)malloc(n*sizeof(float));
+    for(i=0;i<n;i++)
+        *(profwt+i) = profit[i]/weight[i];
+    float max=profwt[0];
+    int maxid=0;
+    float maxprofit=0,frac;
     
-    while(wt1 != maxwt){
-        for(i=0;i<n;i++){
-            if(profit[i] == -1)
-                continue;
-            else if(profit[i]>max){
-                max = profit[i];
+    while(1){
+        max=0;
+        for(i=0;i<n;i++)
+            if(max<profwt[i]){
+                max = profwt[i];
                 maxid = i;
-            }  
-        }
-        if(wt1 + wt[maxid] <= maxwt){
-            maxprofit = maxprofit + max;
-            wt1 = wt1 + wt[maxid];
+                
+            }
+        
+        //printf("Highest pw ratio: %f\n",profwt[maxid]);
             
-        } 
+        
+        if(weight[maxid] <= maxwt){
+            maxprofit = maxprofit + profit[maxid]; 
+            maxwt = maxwt - weight[maxid];
+        }
         else{
-            frac = (maxwt-wt1)/wt[maxid];
-            maxprofit =  maxprofit + frac*profit[maxid];
-            wt1 = wt1 + frac*wt[maxid];
+            frac = maxwt/weight[maxid];
             
+            maxprofit = maxprofit + (frac*profit[maxid]);
+                
+            maxwt = 0;
         }
-        profit[maxid] = -1;
+        profwt[maxid] = -1;
+        //printf("Remaining Capacity: %f\n",maxwt);
+        if(maxwt == 0)
+            break;
     }
+        
     
     return maxprofit;
-        
-            
+    
+    
 }
+
 int main(){
-    int i=0,n;
+    float *profit, *weight;
     float maxwt;
     printf("Enter number of items for knapsack: ");
+    int n;
     scanf("%d",&n);
-    printf("Enter the maximum capacity of knapsack: ");
+    printf("Enter maximum capacity of knapsack: ");
     scanf("%f",&maxwt);
-    float* profit = (float*)malloc(n*sizeof(float));
-    float* wt = (float*)malloc(n*sizeof(float));
+    profit = (float*)malloc(n*sizeof(float));
+    weight = (float*)malloc(n*sizeof(float));
+    int i=0;
+    printf("Enter profits and weights of each item:-\n");
     for(i=0;i<n;i++){
-        printf("Enter profit of %dth item: ",i+1);
-        scanf("%f",&profit[i]);
-        printf("Enter weight of %dth item: ",i+1);
-        scanf("%f",&wt[i]);
+        printf("Enter profit for %dth item: ",i+1);
+        scanf("%f",(profit+i));
+        printf("Enter weight for %dth item: ",i+1);
+        scanf("%f",(weight+i));
+        if(*(weight+i)<=0.0){
+            printf("Weight of an item cannot be zero");
+            return 0;
+        }
     }
     
-    float maxp = knapsack(profit,wt,n,maxwt);
-    printf("Maximum profit of this knapsack is %.2f",maxp);
+    /*float* profwt = (float*)malloc(n*sizeof(float));
+    for(i=0;i<n;i++)
+        profwt[i] = profit[i]/weight[i];
+    for(i=0;i<n;i++)
+        printf("%f\n",*(profwt+i));*/
+    float maxp = knapsack(profit,weight,n,maxwt);
+    printf("Maximum profit for knapsack is %.2f",maxp);
     return 0;
-    
+
 
 }

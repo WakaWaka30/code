@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float knapsack(float* profit, float* weight, int n, float maxwt){
+float* knapsack(float* profit, float* weight, int n, float maxwt){
     int i=0;
     float* profwt = (float*)malloc(n*sizeof(float));
     for(i=0;i<n;i++)
@@ -9,7 +9,10 @@ float knapsack(float* profit, float* weight, int n, float maxwt){
     float max=profwt[0];
     int maxid=0;
     float maxprofit=0,frac;
-    
+    float* frac1 = (float*)malloc((n+1)*sizeof(float));
+    for(i=0;i<=n;i++)
+        *(frac1+i) = 0;
+        
     while(1){
         max=0;
         for(i=0;i<n;i++)
@@ -25,12 +28,13 @@ float knapsack(float* profit, float* weight, int n, float maxwt){
         if(weight[maxid] <= maxwt){
             maxprofit = maxprofit + profit[maxid]; 
             maxwt = maxwt - weight[maxid];
+            frac1[maxid] = 1;
         }
         else{
             frac = maxwt/weight[maxid];
             
             maxprofit = maxprofit + (frac*profit[maxid]);
-                
+            frac1[maxid] = frac;    
             maxwt = 0;
         }
         profwt[maxid] = -1;
@@ -39,8 +43,8 @@ float knapsack(float* profit, float* weight, int n, float maxwt){
             break;
     }
         
-    
-    return maxprofit;
+    frac1[n] = maxprofit;
+    return frac1;
     
     
 }
@@ -73,9 +77,11 @@ int main(){
         profwt[i] = profit[i]/weight[i];
     for(i=0;i<n;i++)
         printf("%f\n",*(profwt+i));*/
-    float maxp = knapsack(profit,weight,n,maxwt);
-    printf("Maximum profit for knapsack is %.2f",maxp);
+    float* maxp = knapsack(profit,weight,n,maxwt);
+    printf("Maximum profit for knapsack is %.2f\n",*(maxp+n));
+    printf("Fractions of each item contributing in maximum profit:-\n");
+    for(i=0;i<n;i++)
+        printf("Item %d: %f\n",i+1,*(maxp+i));
     return 0;
-
-
+    
 }

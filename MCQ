@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+char** QSetter(int n){
+    
+    int i=0,j=0;
+    char* str = (char*)malloc(1000*sizeof(char));
+    int* len = (int*)malloc(n*sizeof(int));
+    char** Qp = (char**)malloc(n*sizeof(char*));
+    for(i=0;i<n;i++){
+        printf("Enter Question %d:\n",i+1);
+        scanf("\n%[^\n]%*c",str);
+        len[i] = strlen(str);
+        *(Qp+i) = (char*)malloc((len[i]+2)*sizeof(char));
+        j=0;
+        while(str[j] != '\0'){
+            *(*(Qp+i)+j) = str[j];
+            j++;
+        }
+        
+        
+    }
+    return Qp;
+    
+    
+}
+
+char*** Option(int n){
+    int i=0,j=0,k=0,len=0;
+    char ca;
+    char str1[1000];
+    char*** op = (char***)malloc(n*sizeof(char**));
+    for(i=0;i<n;i++)
+        *(op+i) = (char**)malloc(5*sizeof(char*));
+    for(i=0;i<n;i++)
+        op[i][4] = (char*)malloc(1*sizeof(char));
+    for(i=0;i<n;i++){
+        printf("Enter 4 options for question: %d\n",i+1);
+        k=0;
+        
+        for(j=0;j<4;j++){
+            printf("Enter option %c for question %d: ",j+97,i+1);
+            scanf("\n%[^\n]%*c",str1);
+            len = strlen(str1);
+            op[i][j] = (char*)malloc((len+2)*sizeof(char));
+            for(k=0;k<len;k++)
+                op[i][j][k] = str1[k];
+               
+        }
+        printf("Enter correct answer for question %d: ",i+1);
+        scanf("%c",&ca);
+        if(ca != 'a' && ca != 'b' && ca != 'c' && ca != 'd')
+            printf("Correct option should be a,b,c or d");
+        else
+            op[i][4][0] = ca;
+        
+    }
+    
+    return op;
+    
+    
+    
+}
+
+void Checker(char*** op, char* uinp, int n, int pmark, int nmark){
+    
+    int i=0,j=0,tmarks=0,inc=0,c=0;
+    char* ca = (char*)malloc(n*sizeof(char));
+    for(i=0;i<n;i++)
+        *(ca+i) = op[i][4][0];
+    int* score = (int*)malloc(n*sizeof(int));
+    for(i=0;i<n;i++)
+        score[i] = 0;
+    for(i=0;i<n;i++){
+        if(ca[i] == uinp[i]){
+            score[i] = score[i] + pmark;
+            c++;
+        }
+        else{
+            score[i] = score[i] - nmark;
+            inc++;
+        }
+        tmarks = tmarks + score[i];    
+    }
+    
+    float percent;
+    
+    printf("\nMarks rewarded for correct answer: %d\nMarks deducted for incorrect answer: %d\nTotal marks scored by student: %d\n",pmark,nmark,tmarks);
+    printf("Number of correct answers: %d\n",c);
+    printf("Number of incorrect answers: %d\n",inc);
+    
+    int maxmark = pmark*n;
+    percent = (float)tmarks/(float)maxmark;
+    percent = percent*100;
+    printf("Resultant Percentage: %f",percent);
+            
+    
+    
+}
+
+
+int main(){
+    printf("Enter number of questions: ");
+    
+    int n,pmark,nmark,i=0,j=0;
+    scanf("%d",&n);
+    char** Qp = QSetter(n);
+    char*** op = Option(n);
+    printf("Enter the amount of marks awarded for correct answer: ");
+    scanf("%d",&pmark);
+    printf("Enter the amount of marks deducted for incorrect answer: ");
+    scanf("%d",&nmark);
+    printf("The questions are:-\n");
+    for(i=0;i<n;i++){
+        printf("%s\n",*(Qp+i));
+        for(j=0;j<4;j++)
+            printf("%c. %s\n",97+j,*(*(op+i)+j));
+        printf("\n");
+    }
+    char* uinp = (char*)malloc(n*sizeof(char));
+    for(i=0;i<n;i++){
+        printf("Enter option of Question %d as answer: ",i+1);
+        scanf("\n%c",(uinp+i));
+    }
+    Checker(op,uinp,n,pmark,nmark);
+    return 0;    
+}

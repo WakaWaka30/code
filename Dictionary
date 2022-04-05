@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char*argv[]){
+    printf("Enter number of strings: ");
+    int n;
+    scanf("%d",&n);
+    char** collect = (char**)malloc(n*sizeof(char*));
+    int i=0,l,j=0;
+    char* str = (char*)malloc(100*sizeof(char));
+    for(i=0;i<n;i++){
+        printf("Enter string %d: ",i+1);
+        scanf("\n%[^\n]%*c",str);
+        l = strlen(str);
+        *(collect+i) = (char*)malloc(l*sizeof(char));
+        j=0;
+        while(str[j] != '\0'){
+            collect[i][j] = str[j];
+            j++;
+        }
+        
+          
+    }
+    char c;
+    while(1){
+        printf("Enter 1 if you want to input another string\nEnter any other key if you want to stop: ");
+        scanf("\n%c",&c);
+        if(c == '1'){
+            n++;
+            collect = realloc(collect,n*sizeof(char*));
+            printf("Enter string %d: ",n);
+            scanf("\n%[^\n]%*c",str);
+            l = strlen(str);
+            *(collect+n-1) = (char*)malloc(l*sizeof(char));
+            j=0;
+            while(str[j]!='\0'){
+                collect[n-1][j] = str[j];
+                j++;
+            }
+                
+            
+        }
+        
+        else
+            break;
+            
+        
+    }
+    
+    printf("%d--%ld",n,sizeof(collect));
+    
+    exit(0);
+        
+}

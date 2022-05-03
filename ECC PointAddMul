@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct point{
+    
+    int x;
+    int y;
+    
+};
+
+int pos(int a, int n){
+    if(a>0)
+        return a;
+        
+    else if(a<0){
+        while(1){
+            a = a+n;
+            if(a>0)
+                break;
+        }
+        return a;
+    }
+    
+    
+}
+
+int MI(int a, int n){
+    
+    if(a>n){
+        printf("Cannot find inverse1");
+        exit(0);
+        
+    }
+    
+    if(a<0)
+        a = pos(a,n);
+   
+    
+    int r1,r2,r,q,s,t,s1,s2,t1,t2;
+    
+    r1 = n;
+    r2 = a;
+    s1 = 1;
+    s2 = 0;
+    t1 = 0;
+    t2 = 1;
+    
+    
+    
+    while(1){
+        q = r1/r2;
+        s = s1 - q*s2;
+        t = t1 - q*t2;
+        r = r1%r2;
+        
+        if(r != 0){
+            r1 = r2;
+            r2 = r;
+            s1 = s2;
+            s2 = s;
+            t1 = t2;
+            t2 = t;
+        }
+        
+        else 
+            break;
+        
+            
+            
+        
+    }
+    if(r2 != 1){
+        printf("Cannot find inverse2");
+        exit(0);
+    }
+    return t2;
+}
+
+struct point PointAdd(struct point P, struct point Q, int a, int p){
+    
+    int lambda,inv;
+    struct point res;
+    
+    if(P.x == Q.x && P.y == Q.y){
+        
+        lambda = 3*P.x*P.x + a;
+        
+        if(lambda%(2*P.y) == 0)
+            lambda = lambda/(2*P.y);
+        
+        else{
+            
+            inv = MI((2*P.y)%p,p);
+            
+            lambda = lambda*inv;
+        }
+        
+        res.x = pos(((lambda*lambda)-2*P.x)%p,p);
+        
+        res.y = pos((lambda*(P.x-res.x) - P.y)%p,p);
+        
+        
+        
+    }
+    
+    else{
+        
+        lambda = (Q.y-P.y);
+        
+        if(lambda%(Q.x-P.x) == 0)
+            lambda = lambda/(Q.x-P.x);
+        else{
+            
+            inv = MI((Q.x-P.x)%p,p);
+            
+            lambda = lambda*inv;
+        }
+        
+        res.x = pos((lambda*lambda - P.x - Q.x)%p,p);
+        res.y = pos((lambda*(P.x-res.x)-P.y)%p,p);
+        
+            
+        
+    }
+    
+
+    
+    return res;
+    
+    
+}
+
+struct point Multiply(int k, struct point P, int a, int p){
+    
+    struct point res;
+    
+    
+    int i=0;
+    res = P;
+    while(i<k){
+        res = PointAdd(res,P,a,p);
+        i++;
+    }
+    
+    
+        
+    return res;    
+    
+}
+
+    
+int main(){
+    struct point P,Q,res;
+    int p,a;
+    printf("Enter 1 for point addition\nEnter 2 for point multiplication: ");
+    int x;
+    scanf("%d",&x);
+    if(x == 1){
+        printf("Enter abscissa of P: ");
+        scanf("%d",&P.x);
+        printf("Enter ordinate of P: ");
+        scanf("%d",&P.y);
+        printf("Enter abscissa of Q: ");
+        scanf("%d",&Q.x);
+        printf("Enter ordinate of Q: ");
+        scanf("%d",&Q.y);
+    
+        printf("Enter modulo: ");
+        scanf("%d",&p);
+        printf("Enter coefficient of x^3: ");
+        scanf("%d",&a);
+    
+        res = PointAdd(P,Q,a,p);
+    
+        printf("The addition of (%d,%d) and (%d,%d) in modulo %d is point (%d,%d)",P.x,P.y,Q.x,Q.y,p,res.x,res.y);
+    }
+    
+    else{
+        printf("Enter abscissa of P: ");
+        scanf("%d",&P.x);
+        printf("Enter ordinate of P: ");
+        scanf("%d",&P.y);
+        printf("Enter multiplier: ");
+        int k;
+        scanf("%d",&k);
+        printf("Enter modulo: ");
+        scanf("%d",&p);
+        printf("Enter coefficient of x^3: ");
+        scanf("%d",&a);
+        res = Multiply(k,P,a,p);
+        printf("The multiplication of %d and (%d,%d) in modulo %d is point (%d,%d)",k,P.x,P.y,p,res.x,res.y);
+    }
+    exit(0);
+    
+    
+    
+      
+ }   
+    

@@ -137,7 +137,7 @@ struct point Multiply(int k, struct point P, int a, int p){
     
     int i=0;
     res = P;
-    while(i<k){
+    while(i<k-1){
         res = PointAdd(res,P,a,p);
         i++;
     }
@@ -148,11 +148,47 @@ struct point Multiply(int k, struct point P, int a, int p){
     
 }
 
+void PointGen(int a, int b, int p){
+    int x[p*p];
+    int y[p*p];
+    int ysqr;
+    int eceq;
+    int k=0,i=0,j=0;
+    struct point* pointcol = (struct point*)malloc(0*sizeof(struct point));
+    int count=0;
+    for(i=0;i<p;i++){
+        
+        
+        eceq = (pos(((i*i*i)+a*i+b),p))%p;
+        
+        for(j=0;j<p;j++){
+            ysqr = (j*j)%p;
+        
+         
+            if(ysqr == eceq){
+                count++;
+                pointcol = realloc(pointcol,count*sizeof(struct point));
+                pointcol[count-1].x = i;
+                pointcol[count-1].y = j;
+                
+            }
+        }    
+        
+    }
+    
+    //struct point* pcol = (struct point*)malloc
+    printf("All points on curve y^2 = x^3 + %dx + %d(mod q) are:-\n",a,b);
+    for(i=0;i<count;i++){
+        printf("(%d,%d)\n",pointcol[i].x,pointcol[i].y);
+    }
+}
+
+
     
 int main(){
     struct point P,Q,res;
     int p,a;
-    printf("Enter 1 for point addition\nEnter 2 for point multiplication: ");
+    printf("Enter 1 for point addition\nEnter 2 for point multiplication\nEnter any other number for point generation: ");
     int x;
     scanf("%d",&x);
     if(x == 1){
@@ -175,7 +211,7 @@ int main(){
         printf("The addition of (%d,%d) and (%d,%d) in modulo %d is point (%d,%d)",P.x,P.y,Q.x,Q.y,p,res.x,res.y);
     }
     
-    else{
+    else if(x == 2){
         printf("Enter abscissa of P: ");
         scanf("%d",&P.x);
         printf("Enter ordinate of P: ");
@@ -190,10 +226,20 @@ int main(){
         res = Multiply(k,P,a,p);
         printf("The multiplication of %d and (%d,%d) in modulo %d is point (%d,%d)",k,P.x,P.y,p,res.x,res.y);
     }
+    
+    else{
+        printf("Enter coefficient of x term: ");
+        int a,b,p;
+        scanf("%d",&a);
+        printf("Enter constant term: ");
+        scanf("%d",&b);
+        printf("Enter modulo: ");
+        scanf("%d",&p);
+        PointGen(a,b,p);
+    }
     exit(0);
     
     
     
       
- }   
-    
+ }  

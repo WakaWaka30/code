@@ -143,6 +143,27 @@ uint8_t** initialize_aes_sbox() {
 	    }
 	return sbox1;    
 }
+
+uint8_t** initialize_aes_invsbox(){
+    
+    uint8_t** invsbox = (uint8_t**)malloc(16*sizeof(uint8_t*));
+    int i=0,j=0;
+    for(i=0;i<16;i++)
+        invsbox[i] = (uint8_t*)malloc(16*sizeof(uint8_t));
+    
+    uint8_t** sbox = initialize_aes_sbox();
+    uint8_t x;
+    for(i=0;i<16;i++)
+        for(j=0;j<16;j++){
+            x = sbox[i][j];
+            invsbox[x/16][x%16] = i*16 + j;
+        }
+                
+        
+    return invsbox;    
+        
+}
+
 uint8_t** KeyGenerator(uint8_t** key, int roundval){
     int i=0,j=0;
     uint8_t** reskey = (uint8_t**)malloc(4*sizeof(uint8_t*));
@@ -250,6 +271,23 @@ uint8_t*** SubBytes(uint8_t*** sa, int blocks){
     
 }
 
+uint8_t*** InvSubBytes(uint8_t*** sa, int blocks){
+    uint8_t** invsbox = initialize_aes_invsbox();
+    int i=0,j=0,k=0;
+    uint8_t x;
+    for(i=0;i<blocks+1;i++){
+        for(j=0;j<4;j++)
+            for(k=0;k<4;k++){
+                x = sa[i][j][k];
+                sa[i][j][k] = invsbox[x/16][x%16];
+            }
+                
+    }
+    
+    return sa;
+    
+}
+
 uint8_t* CLS(uint8_t* g){
     
      int temp1, temp2;
@@ -287,6 +325,25 @@ uint8_t*** ShiftRows(uint8_t*** sa, int blocks){
     return sa;    
     
 }
+
+uint8_t*** InvShiftRows(uint8_t*** sa, int blocks){
+    int i=0,j=0,k=0;
+    
+    for(i=0;i<blocks+1;i++)
+        for(j=1;j<4;j++){    
+            k=0;
+            while(1){
+                sa[i][j] = CLS(sa[i][j]);
+                k++;
+                if((4-j) == k)
+                    break;
+            }
+        }
+        
+    return sa;    
+    
+}
+
 uint8_t mixcolmul(uint8_t A, uint8_t B){
     int i=0,j=0;
     int* bin1 = (int*)malloc(8*sizeof(int));
@@ -389,54 +446,6 @@ uint8_t** mixcol(uint8_t** sm){
     
 }
 
-uint8_t** invmixcol(uint8_t** sm){
-    
-    uint8_t mcm[4][4];
-    
-    mcm[0][0] = 0x0e;
-    mcm[0][1] = 0x0b;
-    mcm[0][2] = 0x0d;
-    mcm[0][3] = 0x09;
-    mcm[1][0] = 0x09;
-    mcm[1][1] = 0x0e;
-    mcm[1][2] = 0x0b;
-    mcm[1][3] = 0x0d;
-    mcm[2][0] = 0x0d;
-    mcm[2][1] = 0x09;
-    mcm[2][2] = 0x0e;
-    mcm[2][3] = 0x0b;
-    mcm[3][0] = 0x0b;
-    mcm[3][1] = 0x0d;
-    mcm[3][2] = 0x09;
-    mcm[3][3] = 0x0e;
-    
-    int i=0,j=0,k=0;
-    
-    uint8_t** resmat = (uint8_t**)malloc(4*sizeof(uint8_t*));
-    
-    for(i=0;i<4;i++)
-        resmat[i] = (uint8_t*)malloc(4*sizeof(uint8_t));
-    
-    for(i=0;i<4;i++)
-        for(j=0;j<4;j++)
-            resmat[i][j] = 0;
-    
-        
-    for(i=0;i<4;i++)
-        for(j=0;j<4;j++)
-            for(k=0;k<4;k++)
-                resmat[i][j] = resmat[i][j]^mixcolmul(sm[k][j],mcm[i][k]);
-            
-                
-    return resmat;    
-        
-    
-    
-    
-    
-    
-    
-}
 
 uint8_t*** MixColumns(uint8_t*** sa, int blocks){
     
@@ -449,12 +458,12 @@ uint8_t*** MixColumns(uint8_t*** sa, int blocks){
     
 }
 
-uint8_t*** InverseMixColumns(uint8_t*** sa, int blocks){
+uint8_t*** InvMixColumns(uint8_t*** sa, int blocks){
     
     int i=0;
     
     for(i=0;i<blocks+1;i++)
-        sa[i] = invmixcol(sa[i]);
+        sa[i] = mixcol(mixcol(mixcol(sa[i])));
     
     return sa;    
     
@@ -508,69 +517,234 @@ uint8_t*** AESEncrypt(uint8_t*** sa, int blocks, uint8_t** key){
 
 uint8_t*** AESDecrypt(uint8_t*** ct, int blocks, uint8_t** key){
     
+    uint8_t** reskey = KeyGenerator(key,0);
+    int i=0,j=0,k=0;
+    while(k<11){
+        reskey = KeyGenerator(reskey,k);
+        k++;
+    }
+    
+    ct = AddRoundKey(ct,reskey,blocks);
+    int roundval = 1;
+   
+    while(roundval<=10){
+        int i=0,j=0,k=0;
+        
+         
+        if(roundval != 10){
+            k=0;
+            ct = InvShiftRows(ct,blocks); 
+            ct = InvSubBytes(ct,blocks);
+            
+            reskey = KeyGenerator(key,0);
+            
+            while(k<11-roundval){
+                reskey = KeyGenerator(reskey,k);
+                k++;
+            }
+            
+            ct = AddRoundKey(ct,reskey,blocks);
+            
+            
+            ct = InvMixColumns(ct,blocks);
+            
+            
+           
+            
+            
+        }
+        
+        else{
+            k=0;
+            ct = InvShiftRows(ct,blocks); 
+            ct = InvSubBytes(ct,blocks);
+            
+            
+            
+            
+            reskey = KeyGenerator(key,0);
+            
+            while(k<11-roundval){
+                reskey = KeyGenerator(reskey,k);
+                k++;
+            }
+            
+            ct = AddRoundKey(ct,reskey,blocks);
+            
+           
+            
+                  
+            
+        }
+       
+        
+        
+    
+        roundval++;
+        
+        
+    }
+       
+    return ct;    
+    
+    
+    
+    
 }
 
 int main(){
+    int x;
+    printf("Enter 1 for encryption\nEnter 2 for decryption: ");
+    scanf("%d",&x);
+    if(x == 1){
+        int i1=0;
+        char str[1000];
+    
+        printf("Enter string: ");
+        scanf("\n%[^\n]%*c",str);
+        
+        /*FILE* ptr = fopen("sample.txt","r");
+        
+        int s;
+        
+        while(((s = fgetc(ptr)) != -1 )){
+            str[i1] = (char)s;
+            i1++;
+        }
+        printf("String read from file: %s\n",str);*/
+        int l = strlen(str);
+        int blocks = l/16;
+        int pad = l%16;
+        int i=0,j=0,k=0;
+        char* str1 = (char*)malloc(l*sizeof(char));
+        while(str[i] != '\0'){
+            str1[i] = str[i];
+            i++;
+        }
+    
+        uint8_t*** as = StateArraysGenerator(str1);
+        
+        for(i=0;i<blocks+1;i++){
+            for(j=0;j<4;j++){
+                for(k=0;k<4;k++)
+                    printf("%X\t",as[i][j][k]);
+                printf("\n");
+            }
+        printf("\n\n");
+        
+        }
     
     
+        uint8_t** key = (uint8_t**)malloc(4*sizeof(uint8_t*));
+        for(i=0;i<4;i++)
+            key[i] = (uint8_t*)malloc(4*sizeof(uint8_t));
+        key[0][0] = 0x54;
+        key[0][1] = 0x73;
+        key[0][2] = 0x20;
+        key[0][3] = 0x67;
+        key[1][0] = 0x68;
+        key[1][1] = 0x20;
+        key[1][2] = 0x4b;
+        key[1][3] = 0x20;
+        key[2][0] = 0x61;
+        key[2][1] = 0x6d;
+        key[2][2] = 0x75;
+        key[2][3] = 0x46;
+        key[3][0] = 0x74;
+        key[3][1] = 0x79;
+        key[3][2] = 0x6e;
+        key[3][3] = 0x75;
+        printf("Ciphertext in hexadecimal base:-\n");
+        uint8_t*** ct = AESEncrypt(as,blocks,key);
+        for(i=0;i<blocks+1;i++){
+            for(j=0;j<4;j++){
+                for(k=0;k<4;k++)
+                    printf("%X",ct[i][k][j]);
+            
+            }
+        
+        
+        }
+        printf("\nCiphertext in character format:-\n%s",toString(ct,blocks,pad));
+        uint8_t*** osa  = AESDecrypt(ct,blocks,key);
+        printf("\nPlaintext:-\n\n");
+        for(i=0;i<blocks+1;i++){
+            for(j=0;j<4;j++){
+                for(k=0;k<4;k++)
+                    printf("%X",osa[i][k][j]);
+                
+            }
+            
+        
+        }
     
-    char str[] = "Two One Nine Two";
+        char* str2 = toString(osa,blocks,pad);
+        printf("\nDecrypted text: %s",str2);
     
-    /*printf("Enter string: ");
-    scanf("%[^\n]%*c",str);*/
+    }
+    
+    else{
+        char str[100];
+    
+        printf("Enter ciphertext: ");
+        scanf("\n%[^\n]%*c",str);
    
-    int l = strlen(str);
-    int blocks = l/16;
-    int pad = l%16;
-    int i=0,j=0,k=0;
-    char* str1 = (char*)malloc(l*sizeof(char));
-    while(str[i] != '\0'){
-        str1[i] = str[i];
-        i++;
-    }
-    
-    uint8_t*** as = StateArraysGenerator(str1);
-        
-    for(i=0;i<blocks+1;i++){
-        for(j=0;j<4;j++){
-            for(k=0;k<4;k++)
-                printf("%X\t",as[i][j][k]);
-            printf("\n");
+        int l = strlen(str);
+        int blocks = l/16;
+        int pad = l%16;
+        int i=0,j=0,k=0;
+        char* str1 = (char*)malloc(l*sizeof(char));
+        while(str[i] != '\0'){
+            str1[i] = str[i];
+            i++;
         }
+    
+        uint8_t*** ct = StateArraysGenerator(str1);
+        
+        for(i=0;i<blocks+1;i++){
+            for(j=0;j<4;j++){
+                for(k=0;k<4;k++)
+                    printf("%X\t",ct[i][j][k]);
+                printf("\n");
+            }
         printf("\n\n");
         
+        }
+        uint8_t** key = (uint8_t**)malloc(4*sizeof(uint8_t*));
+        for(i=0;i<4;i++)
+            key[i] = (uint8_t*)malloc(4*sizeof(uint8_t));
+        key[0][0] = 0x54;
+        key[0][1] = 0x73;
+        key[0][2] = 0x20;
+        key[0][3] = 0x67;
+        key[1][0] = 0x68;
+        key[1][1] = 0x20;
+        key[1][2] = 0x4b;
+        key[1][3] = 0x20;
+        key[2][0] = 0x61;
+        key[2][1] = 0x6d;
+        key[2][2] = 0x75;
+        key[2][3] = 0x46;
+        key[3][0] = 0x74;
+        key[3][1] = 0x79;
+        key[3][2] = 0x6e;
+        key[3][3] = 0x75;
+        uint8_t*** osa  = AESDecrypt(ct,blocks,key);
+        printf("\nPlaintext:-\n\n");
+        for(i=0;i<blocks+1;i++){
+            for(j=0;j<4;j++){
+                for(k=0;k<4;k++)
+                    printf("%X",osa[i][j][k]);
+                
+            }
+            
+        
+        }
+    
+        char* str2 = toString(osa,blocks,pad);
+        printf("Decrypted text: %s",str2);
     }
     
-    printf("%s\n\n",toString(as,blocks,pad));
-    uint8_t** key = (uint8_t**)malloc(4*sizeof(uint8_t*));
-    for(i=0;i<4;i++)
-        key[i] = (uint8_t*)malloc(4*sizeof(uint8_t));
-    key[0][0] = 0x54;
-    key[0][1] = 0x73;
-    key[0][2] = 0x20;
-    key[0][3] = 0x67;
-    key[1][0] = 0x68;
-    key[1][1] = 0x20;
-    key[1][2] = 0x4b;
-    key[1][3] = 0x20;
-    key[2][0] = 0x61;
-    key[2][1] = 0x6d;
-    key[2][2] = 0x75;
-    key[2][3] = 0x46;
-    key[3][0] = 0x74;
-    key[3][1] = 0x79;
-    key[3][2] = 0x6e;
-    key[3][3] = 0x75;
-    printf("Cipher state arrays are:-\n");
-    uint8_t*** ct = AESEncrypt(as,blocks,key);
-    for(i=0;i<blocks+1;i++){
-        for(j=0;j<4;j++){
-            for(k=0;k<4;k++)
-                printf("%X\t",ct[i][j][k]);
-            printf("\n");
-        }
-        printf("\n\n");
+        return 0;
         
-    }
-    return 0;
 }
